@@ -5,6 +5,7 @@ from Bullet import *
 from Player import *
 from AimPoint import *
 from defaults import *
+from Environment import *
 
 pygame.init()
 
@@ -14,6 +15,10 @@ player1 = Player(50, 690)
 player2 = Player(950, 690)
 aimpoint1 = AimPoint(player1.rect.x + 15, player1.rect.y - 15, RED)
 aimpoint2 = AimPoint(player2.rect.x + 15, player2.rect.y - 15, GREEN)
+
+environment1 = Environment(600, 690, GREEN)
+EnvironmentList = []
+EnvironmentList.append(environment1)
 
 bullet = Bullet(-10, -10, 5, (255, 255, 255))
 
@@ -39,6 +44,7 @@ def findAngle(pos):
 
     return angle
 
+
 running = True
 time = 0
 power = 0
@@ -48,6 +54,7 @@ clock = pygame.time.Clock()
 turn = "p1"
 while running:
     clock.tick(200)
+
     if shoot:
         if bullet.y < 750 - bullet.radius:
             if turn == "p1":
@@ -105,6 +112,7 @@ while running:
                 print(player1.target_health)
 
     screen.fill(GRAY)
+
     player1.draw(screen, RED)
     player2.draw(screen, GREEN)
     pygame.draw.circle(screen, aimpoint1.color, (aimpoint1.x, aimpoint1.y), aimpoint1.radius, 1)
@@ -112,9 +120,23 @@ while running:
     if not shoot:
         if turn == "p1":
             player1.move(event)
+
         if turn == "p2":
             player2.move(event)
     player1.update(aimpoint1, screen)
     player2.update(aimpoint2, screen)
     bullet.draw(screen)
+
+    # Check for destruction of environment
+    for env in EnvironmentList:
+        if not env.isdestroyed:
+            env.draw(screen)
+            if bullet.get_circle_rect(screen).colliderect(env.rect):
+                env.isdestroyed = True
+
+    # TODO
+    for env in EnvironmentList:
+        if player1.rect.colliderect(env):
+            player1.rect.bottom = env.rect.top
+
     pygame.display.update()

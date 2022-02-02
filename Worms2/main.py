@@ -57,11 +57,16 @@ while running:
                 bullet.y = po[1]
                 if bullet.get_circle_rect(screen).colliderect(player2.rect):
                     player2.get_damage(10)
+                    bullet.y = 1000
+
             else:
                 time += 0.05
                 po = Bullet.ballPath(player2.rect.center[0], player2.rect.center[1], power, angle, time)
                 bullet.x = po[0]
                 bullet.y = po[1]
+                if bullet.get_circle_rect(screen).colliderect(player1.rect):
+                    player1.get_damage(10)
+                    bullet.y = 1000
         else:
             shoot = False
             time = 0
@@ -98,23 +103,21 @@ while running:
                         power = 50
                         angle = findAngle(pos)
 
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_SPACE:
-                print(player1.target_health)
-                player1.get_damage(10)
-                print(player1.target_health)
-
     screen.fill(GRAY)
-    player1.draw(screen, RED)
-    player2.draw(screen, GREEN)
-    pygame.draw.circle(screen, aimpoint1.color, (aimpoint1.x, aimpoint1.y), aimpoint1.radius, 1)
-    pygame.draw.circle(screen, aimpoint2.color, (aimpoint2.x, aimpoint2.y), aimpoint1.radius, 1)
+    if player1.target_health != 0:
+        player1.draw(screen, RED)
+        player1.update(aimpoint1, screen)
+        pygame.draw.circle(screen, aimpoint1.color, (aimpoint1.x, aimpoint1.y), aimpoint1.radius, 1)
+    if player2.target_health != 0:
+        player2.draw(screen, GREEN)
+        player2.update(aimpoint2, screen)
+        pygame.draw.circle(screen, aimpoint2.color, (aimpoint2.x, aimpoint2.y), aimpoint1.radius, 1)
+
     if not shoot:
         if turn == "p1":
             player1.move(event)
         if turn == "p2":
             player2.move(event)
-    player1.update(aimpoint1, screen)
-    player2.update(aimpoint2, screen)
+
     bullet.draw(screen)
     pygame.display.update()

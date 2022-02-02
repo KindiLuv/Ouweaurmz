@@ -12,8 +12,8 @@ screen = pygame.display.set_mode(SIZE)
 
 
 class Player(object):
-    def __init__(self):
-        self.rect = pygame.rect.Rect((50, 690, RECT_WIDTH, RECT_HEIGHT))
+    def __init__(self, x, y):
+        self.rect = pygame.rect.Rect((x, y, RECT_WIDTH, RECT_HEIGHT))
 
         self.direction = "right"
         self.shooting_angle = pi / 4
@@ -60,7 +60,7 @@ class Player(object):
         # Update aimpoint coordinates
         aimpoint.x, aimpoint.y = self.get_aimpoint_coordinates()
 
-    def draw(self, surface):
+    def draw(self, screen, color):
 
         # rect to redraw
-        pygame.draw.rect(screen, RED, self.rect, 1)
+        pygame.draw.rect(screen, color, self.rect, 1)

@@ -134,9 +134,9 @@ while running:
             if bullet.get_circle_rect(screen).colliderect(env.rect):
                 env.isdestroyed = True
 
-    # TODO
+    # TODO Player collision
     for env in EnvironmentList:
-        if player1.rect.colliderect(env):
+        if player1.rect.colliderect(env) and not env.isdestroyed:
             player1.rect.bottom = env.rect.top
 
     pygame.display.update()

@@ -16,6 +16,9 @@ class Bullet:
         pygame.draw.circle(screen, self.color, (self.x, self.y), self.radius - 1)
 
 
+    def get_circle_rect(self, screen):
+        return pygame.draw.circle(screen, (0, 0, 0), (self.x, self.y), self.radius)
+
     def ballPath(startx, starty, power, ang, time):
         angle = ang
         velx = cos(angle) * power

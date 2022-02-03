@@ -26,21 +26,32 @@ bullet_list = pygame.sprite.Group()
 
 
 def findAngle(pos):
+    #ici le projo est au centre du joueur
     sX = bullet.x
     sY = bullet.y
     try:
+        #calul de l'angle entre le projo(le centre du joueur) et le viseur (vérifie si le sinus = 0)
         angle = atan((sY - pos[1]) / (sX - pos[0]))
     except:
+        #si le calcul de l'angle n'est pas possible c'est que c'est pi/2
         angle = pi / 2
 
     if pos[1] < sY and pos[0] > sX:
+        #viseurY < projoY et viseurX > projoX veut dire qu'on doit retourner la valeur absolue car on est en bas à droite du cercle trigonométrique
+        #(si le joueur vise en bas à droite du cercle trigo)
         angle = abs(angle)
     elif pos[1] < sY and pos[0] < sX:
+        # (si le joueur vise en bas à gauche du cercle trigo)
+        # pi - angle pour avoir sinus positif sur le cercle trigo
         angle = pi - angle
     elif pos[1] > sY and pos[0] < sX:
-        angle = pi + abs(angle)
+        # (si le joueur vise en haut à gauche)
+        # pi + angle car il est déjà positif
+        angle = pi + angle
     elif pos[1] > sY and pos[0] > sX:
-        angle = (pi * 2) - angle
+        # (si le joueur vise en haut à droite)
+        # pi * 2 pour être à droite du cercle + l'angle pour le sinus
+        angle = (pi * 2) + angle
 
     return angle
 
@@ -58,8 +69,9 @@ while running:
     if shoot:
         if bullet.y < 750 - bullet.radius:
             if turn == "p1":
+                #chaque frame le x et le y de la ball sont calculés à +0.05 secondes
                 time += 0.05
-                po = Bullet.ballPath(player1.rect.center[0], player1.rect.center[1], power, angle, time)
+                po = Bullet.ballPath(bullet, player1.rect.center[0], player1.rect.center[1], power, angle, time)
                 bullet.x = po[0]
                 bullet.y = po[1]
                 if bullet.get_circle_rect(screen).colliderect(player2.rect):
@@ -67,7 +79,7 @@ while running:
                     bullet.y = 1000
             else:
                 time += 0.05
-                po = Bullet.ballPath(player2.rect.center[0], player2.rect.center[1], power, angle, time)
+                po = Bullet.ballPath(bullet, player2.rect.center[0], player2.rect.center[1], power, angle, time)
                 bullet.x = po[0]
                 bullet.y = po[1]
                 if bullet.get_circle_rect(screen).colliderect(player1.rect):
@@ -91,10 +103,12 @@ while running:
             if event.key == pygame.K_SPACE:
                 if not shoot:
                     if turn == "p1":
+                        #on set la position du projo au centre du joueur pour le find angle
                         bullet.x = player1.rect.center[0]
                         bullet.y = player1.rect.center[1]
                         x = bullet.x
                         y = bullet.y
+                        #on set pos au viseur pour le find angle également
                         pos = player1.get_aimpoint_coordinates()
                         shoot = True
                         power = 50
@@ -134,6 +148,14 @@ while running:
             env.draw(screen)
             if bullet.get_circle_rect(screen).colliderect(env.rect):
                 env.isdestroyed = True
+                shoot = False
+                time = 0
+                bullet.x = -10
+                bullet.y = -10
+                if turn == "p1":
+                    turn = "p2"
+                else:
+                    turn = "p1"
 
     # TODO Player collision
     for env in EnvironmentList:

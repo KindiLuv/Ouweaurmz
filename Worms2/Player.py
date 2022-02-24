@@ -26,6 +26,10 @@ class Player(object):
         self.health_ratio = self.maximum_health / self.health_bar_length
         self.health_change_speed = 0.5
 
+        self.is_jumping = False
+        self.is_falling = False
+        self.jumpCount = 20
+
     def get_aimpoint_coordinates(self):
 
         if self.direction == "right":
@@ -60,9 +64,12 @@ class Player(object):
             if self.shooting_angle <= -pi / 6:
                 self.shooting_angle = -pi / 6
 
+        if key[pygame.K_x]:
+            self.is_jumping = True
+
         # print test
         # elif key[pygame.K_SPACE]:
-            # print("oui")
+        # print("oui")
 
         pygame.time.delay(5)
 
@@ -72,6 +79,29 @@ class Player(object):
         aimpoint.x, aimpoint.y = self.get_aimpoint_coordinates()
         self.basic_health(screen)
         # self.advanced_health(screen)
+
+        if self.is_jumping:
+            if self.jumpCount >= -20:
+                neg = 1
+                if self.jumpCount < 0:
+                    neg = -1
+
+                self.rect.y -= (self.jumpCount ** 2) * 0.05 * neg
+                self.jumpCount -= 1
+
+            else:
+                self.jumpCount = 20
+                self.is_jumping = False
+
+
+
+    def gravity(self):
+        if self.rect.y < 690:
+            self.rect.y -= ((-4.9) / 1.25)
+        if self.rect.y >= 690:
+            self.rect.y = 690
+            self.v = 5
+            self.is_jumping = False
 
     def draw(self, screen, color):
 
@@ -91,8 +121,8 @@ class Player(object):
             self.target_health = self.maximum_health
 
     def basic_health(self, screen):
-        pygame.draw.rect(screen, RED, (self.rect.x - 3.5, self.rect.y -15, self.target_health/self.health_ratio, 5))
-        pygame.draw.rect(screen, BLACK, (self.rect.x - 3.5, self.rect.y -15, self.health_bar_length, 5), 1)
+        pygame.draw.rect(screen, RED, (self.rect.x - 3.5, self.rect.y - 15, self.target_health / self.health_ratio, 5))
+        pygame.draw.rect(screen, BLACK, (self.rect.x - 3.5, self.rect.y - 15, self.health_bar_length, 5), 1)
 
     def advanced_health(self, screen):
         transition_width = 0
@@ -100,15 +130,15 @@ class Player(object):
 
         if self.current_health < self.target_health:
             self.current_health += self.health_change_speed
-            transition_width = int((self.target_health - self.current_health)/self.health_ratio)
+            transition_width = int((self.target_health - self.current_health) / self.health_ratio)
             transition_color = GREEN
 
         if self.current_health > self.target_health:
             self.current_health -= self.health_change_speed
-            transition_width = int((self.target_health - self.current_health)/self.health_ratio)
+            transition_width = int((self.target_health - self.current_health) / self.health_ratio)
             transition_color = YELLOW
 
-        health_bar_rect = pygame.Rect(self.rect.x - 3.5, self.rect.y - 15, self.current_health/self.health_ratio, 5)
+        health_bar_rect = pygame.Rect(self.rect.x - 3.5, self.rect.y - 15, self.current_health / self.health_ratio, 5)
         transition_bar_rect = pygame.Rect(health_bar_rect.right, self.rect.y - 15, transition_width, 5)
 
         pygame.draw.rect(screen, RED, health_bar_rect)

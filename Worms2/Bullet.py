@@ -19,12 +19,12 @@ class Bullet:
     def get_circle_rect(self, screen):
         return pygame.draw.circle(screen, self.color, (self.x, self.y), self.radius - 1)
 
-    def ballPath(self, startx, starty, power, ang, time):
+    def ballPath(self, startx, starty, power, ang, time, wind):
         #angle est calculé depuis findAngle
         angle = ang
 
         #vitesse en fonction de l'angle et de la force
-        velx = cos(angle) * power
+        velx = cos(angle) * power  + wind * time
         vely = sin(angle) * power
 
         #distance en fonction du temps

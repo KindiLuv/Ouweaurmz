@@ -67,10 +67,6 @@ class Player(object):
         if key[pygame.K_x]:
             self.is_jumping = True
 
-        # print test
-        # elif key[pygame.K_SPACE]:
-        # print("oui")
-
         pygame.time.delay(5)
 
     def update(self, aimpoint: AimPoint, screen):
@@ -78,7 +74,6 @@ class Player(object):
         # Update aimpoint coordinates
         aimpoint.x, aimpoint.y = self.get_aimpoint_coordinates()
         self.basic_health(screen)
-        # self.advanced_health(screen)
 
         if self.is_jumping:
             if self.jumpCount >= -20:

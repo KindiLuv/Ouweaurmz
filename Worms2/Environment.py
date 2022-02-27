@@ -17,5 +17,6 @@ class Environment:
     def draw(self, ascreen):
         pygame.draw.rect(ascreen, self.color, self.rect)
 
+
     def destroyenv(self):
         self.isdestroyed = True
